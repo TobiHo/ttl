@@ -3,12 +3,42 @@ import random
 
 WIDTH, HEIGHT = 640, 480
 GROUND_HEIGHT = 40
-PLAYER_SIZE = 20
+PLAYER_WIDTH, PLAYER_HEIGHT = 20, 30
 PLAYER_SPEED = 5
 JUMP_VELOCITY = -12
 GRAVITY = 0.6
 FPS = 60
 SPAWN_EVENT = pygame.USEREVENT + 1
+
+# simple pixel figure for the player (5x8 grid)
+PIXEL_MAN = [
+    "  X  ",
+    " XXX ",
+    "X X X",
+    "XXXXX",
+    "X X X",
+    "X X X",
+    "X   X",
+    "X   X",
+]
+
+
+def draw_pixel_man(surface, rect, color=(200, 50, 50)):
+    pixel_w = rect.width // len(PIXEL_MAN[0])
+    pixel_h = rect.height // len(PIXEL_MAN)
+    for r, line in enumerate(PIXEL_MAN):
+        for c, ch in enumerate(line):
+            if ch == "X":
+                pygame.draw.rect(
+                    surface,
+                    color,
+                    pygame.Rect(
+                        rect.x + c * pixel_w,
+                        rect.y + r * pixel_h,
+                        pixel_w,
+                        pixel_h,
+                    ),
+                )
 
 
 def run():
@@ -19,12 +49,17 @@ def run():
     font = pygame.font.SysFont(None, 36)
 
     ground = pygame.Rect(0, HEIGHT - GROUND_HEIGHT, WIDTH, GROUND_HEIGHT)
-    player = pygame.Rect(100, ground.top - PLAYER_SIZE, PLAYER_SIZE, PLAYER_SIZE)
+    player = pygame.Rect(
+        100,
+        ground.top - PLAYER_HEIGHT,
+        PLAYER_WIDTH,
+        PLAYER_HEIGHT,
+    )
     player_vel_y = 0
 
     obstacles = []
-    spawn_delay = 1500
-    obstacle_speed = 4
+    spawn_delay = 1200
+    obstacle_speed = 5
     pygame.time.set_timer(SPAWN_EVENT, spawn_delay)
 
     running = True
@@ -34,13 +69,16 @@ def run():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == SPAWN_EVENT and not game_over:
-                height = random.randint(20, 80)
+                width = random.randint(40, 80)
+                height = random.randint(40, 120)
                 top = ground.top - height
                 if random.random() < 0.3:
-                    top -= random.choice([40, 80])
-                obstacles.append(pygame.Rect(WIDTH, top, 40, height))
-                spawn_delay = max(500, spawn_delay - 20)
-                obstacle_speed += 0.05
+                    top -= random.choice([40, 80, 120])
+                if random.random() < 0.2:
+                    width = random.randint(80, 120)
+                obstacles.append(pygame.Rect(WIDTH, top, width, height))
+                spawn_delay = max(400, spawn_delay - 25)
+                obstacle_speed += 0.1
                 pygame.time.set_timer(SPAWN_EVENT, spawn_delay)
 
         keys = pygame.key.get_pressed()
@@ -84,7 +122,7 @@ def run():
         pygame.draw.rect(screen, (200, 200, 200), ground)
         for obs in obstacles:
             pygame.draw.rect(screen, (50, 200, 50), obs)
-        pygame.draw.rect(screen, (200, 50, 50), player)
+        draw_pixel_man(screen, player)
 
         if game_over:
             text = font.render("Game Over", True, (255, 255, 255))
