@@ -42,7 +42,7 @@ def show_start_screen(entries):
                 start = True
                 running = False
 
-        screen.fill((30, 30, 30))
+        screen.fill((0, 0, 0))
         title = font.render('TTL – Minispiele', True, (255, 255, 255))
         screen.blit(title, (320 - title.get_width() // 2, 20))
 
@@ -58,7 +58,7 @@ def show_start_screen(entries):
         runs_text = font.render(f"Durchlaeufe: {len(entries)}", True, (255, 255, 255))
         screen.blit(runs_text, (40, 360))
 
-        pygame.draw.rect(screen, (50, 200, 50), start_button)
+        pygame.draw.rect(screen, (255, 255, 255), start_button)
         btn_text = font.render('Start', True, (0, 0, 0))
         screen.blit(btn_text, (start_button.centerx - btn_text.get_width() // 2,
                                start_button.centery - btn_text.get_height() // 2))
@@ -104,7 +104,7 @@ def show_end_screen(total_time):
                     if event.unicode.isprintable() and len(name) < 20:
                         name += event.unicode
 
-        screen.fill((30, 30, 30))
+        screen.fill((0, 0, 0))
         time_surf = font.render(f'Gesamtzeit: {total_time:.2f}s', True, (255, 255, 255))
         screen.blit(time_surf, (320 - time_surf.get_width() // 2, 150))
 
@@ -112,7 +112,7 @@ def show_end_screen(total_time):
         name_surf = font.render(name, True, (255, 255, 255))
         screen.blit(name_surf, (input_box.x + 5, input_box.y + 5))
 
-        pygame.draw.rect(screen, (50, 200, 50), save_button)
+        pygame.draw.rect(screen, (255, 255, 255), save_button)
         btn_text = font.render('OK', True, (0, 0, 0))
         screen.blit(btn_text, (save_button.centerx - btn_text.get_width() // 2,
                                save_button.centery - btn_text.get_height() // 2))
