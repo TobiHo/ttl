@@ -5,6 +5,9 @@ from ttl_timer import TtlTimer
 WIDTH, HEIGHT = 640, 480
 GROUND_HEIGHT = 40
 PLAYER_WIDTH, PLAYER_HEIGHT = 20, 30
+BACKGROUND_COLOR = (0, 0, 0)
+GROUND_COLOR = (255, 255, 255)
+OBSTACLE_COLOR = (255, 255, 255)
 PLAYER_SPEED = 5
 JUMP_VELOCITY = -12
 GRAVITY = 0.6
@@ -24,7 +27,7 @@ PIXEL_MAN = [
 ]
 
 
-def draw_pixel_man(surface, rect, color=(200, 50, 50)):
+def draw_pixel_man(surface, rect, color=(255, 255, 255)):
     pixel_w = rect.width // len(PIXEL_MAN[0])
     pixel_h = rect.height // len(PIXEL_MAN)
     for r, line in enumerate(PIXEL_MAN):
@@ -120,10 +123,10 @@ def run(ttl_timer: TtlTimer):
         if player.top > HEIGHT:
             game_over = True
 
-        screen.fill((30, 30, 30))
-        pygame.draw.rect(screen, (200, 200, 200), ground)
+        screen.fill(BACKGROUND_COLOR)
+        pygame.draw.rect(screen, GROUND_COLOR, ground)
         for obs in obstacles:
-            pygame.draw.rect(screen, (50, 200, 50), obs)
+            pygame.draw.rect(screen, OBSTACLE_COLOR, obs)
         draw_pixel_man(screen, player)
 
         ttl_surf = font.render(f"TTL: {ttl_timer.elapsed():.2f}s", True, (200, 200, 200))
@@ -138,7 +141,7 @@ def run(ttl_timer: TtlTimer):
 
     player_time = (pygame.time.get_ticks() - start_time) / 1000.0
     ttl_timer.pause()
-    screen.fill((30, 30, 30))
+    screen.fill(BACKGROUND_COLOR)
     text = font.render(f"Time: {player_time:.2f}s", True, (255, 255, 255))
     screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
     pygame.display.flip()

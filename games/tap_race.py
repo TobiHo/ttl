@@ -6,9 +6,9 @@ WIDTH, HEIGHT = 640, 480
 CELL_SIZE = 80
 ROWS = HEIGHT // CELL_SIZE
 COLS = WIDTH // CELL_SIZE
-BACKGROUND_COLOR = (30, 30, 30)
-CELL_COLOR = (200, 30, 30)
-GRID_COLOR = (50, 50, 50)
+BACKGROUND_COLOR = (0, 0, 0)
+CELL_COLOR = (255, 255, 255)
+GRID_COLOR = (80, 80, 80)
 
 
 def run(ttl_timer: TtlTimer):
@@ -16,7 +16,7 @@ def run(ttl_timer: TtlTimer):
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Tap Race")
     clock = pygame.time.Clock()
-    font = pygame.font.SysFont(None, 48)
+    font = pygame.font.SysFont(None, 36)
 
     grid = [[0 for _ in range(COLS)] for _ in range(ROWS)]
     spawn_delay = 500
