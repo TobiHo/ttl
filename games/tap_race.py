@@ -2,7 +2,7 @@ import pygame
 import random
 
 WIDTH, HEIGHT = 640, 480
-CELL_SIZE = 40
+CELL_SIZE = 80
 ROWS = HEIGHT // CELL_SIZE
 COLS = WIDTH // CELL_SIZE
 BACKGROUND_COLOR = (30, 30, 30)
@@ -18,7 +18,7 @@ def run():
     font = pygame.font.SysFont(None, 48)
 
     grid = [[0 for _ in range(COLS)] for _ in range(ROWS)]
-    spawn_delay = 1000
+    spawn_delay = 500
     spawn_event = pygame.USEREVENT + 1
     pygame.time.set_timer(spawn_event, spawn_delay)
 
@@ -41,7 +41,7 @@ def run():
                 else:
                     r, c = random.choice(empty)
                     grid[r][c] = 1
-                    spawn_delay = max(100, spawn_delay - 20)
+                    spawn_delay = max(50, spawn_delay - 40)
                     pygame.time.set_timer(spawn_event, spawn_delay)
             elif not game_over and event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
