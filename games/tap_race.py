@@ -2,11 +2,14 @@ from ttl_timer import start_ttl_timer
 
 
 def run():
-    print('Tap Race – tippe so schnell wie moeglich zwei Mal Enter wenn "GO" kommt!')
+    print('Tap Race – druecke zwei Mal Enter schneller als der Computer!')
     input('Bereit? Enter druecken...')
     timer = start_ttl_timer()
     input('GO!')
     input('Nochmal!')
-    elapsed = timer()
-    print(f'Deine Zeit: {elapsed:.2f}s')
-    return elapsed
+    player_time = timer()
+    computer_time = 0.05
+    print(f'Deine Zeit: {player_time:.2f}s')
+    print(f'Computer Zeit: {computer_time:.2f}s')
+    print('Computer gewinnt!')
+    return player_time, computer_time
