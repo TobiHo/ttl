@@ -1,4 +1,5 @@
 import pygame
+from ttl_timer import TtlTimer
 
 WIDTH, HEIGHT = 640, 480
 BALL_SIZE = 20
@@ -7,7 +8,7 @@ SPEED_MULTIPLIER = 1.05
 BALL_ACCELERATION = 1.001
 
 
-def run():
+def run(ttl_timer: TtlTimer):
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
@@ -27,6 +28,7 @@ def run():
     computer_score = 0
 
     running = True
+    start_time = pygame.time.get_ticks()
     while running and computer_score < 1:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -70,6 +72,9 @@ def run():
         pygame.draw.ellipse(screen, (255, 255, 255), ball_rect)
         score_surf = font.render(f"{player_score} : {computer_score}", True, (255, 255, 255))
         screen.blit(score_surf, (WIDTH // 2 - score_surf.get_width() // 2, 10))
+
+        ttl_surf = font.render(f"TTL: {ttl_timer.elapsed():.2f}s", True, (200, 200, 200))
+        screen.blit(ttl_surf, (10, 10))
         pygame.display.flip()
         clock.tick(60)
 
@@ -81,5 +86,15 @@ def run():
         pygame.display.flip()
         pygame.time.wait(2000)
 
+    player_time = (pygame.time.get_ticks() - start_time) / 1000.0
+    ttl_timer.pause()
+    screen.fill((0, 0, 0))
+    text = font.render(f"Time: {player_time:.2f}s", True, (255, 255, 255))
+    screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
+    pygame.display.flip()
+    pygame.time.wait(2000)
+    ttl_timer.resume()
+
     pygame.quit()
+    return player_time
 

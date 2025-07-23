@@ -1,5 +1,6 @@
 import pygame
 import random
+from ttl_timer import TtlTimer
 
 WIDTH, HEIGHT = 640, 480
 CELL_SIZE = 80
@@ -10,7 +11,7 @@ CELL_COLOR = (200, 30, 30)
 GRID_COLOR = (50, 50, 50)
 
 
-def run():
+def run(ttl_timer: TtlTimer):
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Tap Race")
@@ -24,6 +25,7 @@ def run():
 
     running = True
     game_over = False
+    start_time = pygame.time.get_ticks()
 
     while running:
         for event in pygame.event.get():
@@ -63,17 +65,24 @@ def run():
                     pygame.draw.rect(screen, CELL_COLOR, rect)
                 pygame.draw.rect(screen, GRID_COLOR, rect, 1)
 
+        ttl_surf = font.render(f"TTL: {ttl_timer.elapsed():.2f}s", True, (200, 200, 200))
+        screen.blit(ttl_surf, (10, 10))
+
         if game_over:
-            text = font.render("Game Over", True, (255, 255, 255))
-            screen.blit(
-                text,
-                (
-                    WIDTH // 2 - text.get_width() // 2,
-                    HEIGHT // 2 - text.get_height() // 2,
-                ),
-            )
+            pygame.display.flip()
+            break
 
         pygame.display.flip()
         clock.tick(60)
 
+    player_time = (pygame.time.get_ticks() - start_time) / 1000.0
+    ttl_timer.pause()
+    screen.fill(BACKGROUND_COLOR)
+    text = font.render(f"Time: {player_time:.2f}s", True, (255, 255, 255))
+    screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
+    pygame.display.flip()
+    pygame.time.wait(2000)
+    ttl_timer.resume()
+
     pygame.quit()
+    return player_time
