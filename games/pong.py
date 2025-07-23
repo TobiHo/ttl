@@ -3,6 +3,8 @@ import pygame
 WIDTH, HEIGHT = 640, 480
 BALL_SIZE = 20
 PADDLE_WIDTH, PADDLE_HEIGHT = 10, 80
+SPEED_MULTIPLIER = 1.05
+BALL_ACCELERATION = 1.001
 
 
 def run():
@@ -25,7 +27,7 @@ def run():
     computer_score = 0
 
     running = True
-    while running and computer_score < 10:
+    while running and computer_score < 1:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -42,22 +44,24 @@ def run():
 
         ball_rect.x += ball_speed_x
         ball_rect.y += ball_speed_y
+        ball_speed_x *= BALL_ACCELERATION
+        ball_speed_y *= BALL_ACCELERATION
 
         if ball_rect.top <= 0 or ball_rect.bottom >= HEIGHT:
-            ball_speed_y *= -1
+            ball_speed_y *= -SPEED_MULTIPLIER
 
         if ball_rect.colliderect(player_rect) and ball_speed_x < 0:
-            ball_speed_x *= -1
+            ball_speed_x *= -SPEED_MULTIPLIER
         if ball_rect.colliderect(computer_rect) and ball_speed_x > 0:
-            ball_speed_x *= -1
+            ball_speed_x *= -SPEED_MULTIPLIER
 
         if ball_rect.left <= 0:
             computer_score += 1
-            ball_speed_x = abs(ball_speed_x) + 1
+            ball_speed_x = abs(ball_speed_x) * SPEED_MULTIPLIER
             ball_rect.center = (WIDTH // 2, HEIGHT // 2)
         if ball_rect.right >= WIDTH:
             player_score += 1
-            ball_speed_x = -abs(ball_speed_x)
+            ball_speed_x = -abs(ball_speed_x) * SPEED_MULTIPLIER
             ball_rect.center = (WIDTH // 2, HEIGHT // 2)
 
         screen.fill((0, 0, 0))
