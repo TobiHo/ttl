@@ -47,10 +47,10 @@ def show_start_screen(entries):
         screen.blit(title, (320 - title.get_width() // 2, 20))
 
         y = 80
-        label = font.render('Beste Zeiten', True, (200, 200, 200))
+        label = font.render('Top Zeiten', True, (200, 200, 200))
         screen.blit(label, (40, y))
         y += 40
-        for idx, entry in enumerate(sorted(entries, key=lambda e: e['time'])[:5], start=1):
+        for idx, entry in enumerate(sorted(entries, key=lambda e: e['time'], reverse=True)[:10], start=1):
             text = font.render(f"{idx}. {entry['name']} - {entry['time']:.2f}s", True, (255, 255, 255))
             screen.blit(text, (40, y))
             y += 30
@@ -143,6 +143,7 @@ def main():
         name = show_end_screen(total_time)
         if name:
             leaderboard.append({'name': name, 'time': total_time})
+            leaderboard = sorted(leaderboard, key=lambda e: e['time'], reverse=True)[:10]
             save_leaderboard(leaderboard)
 
 
