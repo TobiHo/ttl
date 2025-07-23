@@ -4,10 +4,10 @@ import os
 import sys
 
 try:
-    from ttl_timer import start_ttl_timer
+    from ttl_timer import TtlTimer
 except ImportError:  # allow running this module directly
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-    from ttl_timer import start_ttl_timer
+    from ttl_timer import TtlTimer
 
 WIDTH, HEIGHT = 640, 480
 PLAYER_WIDTH, PLAYER_HEIGHT = 40, 20
@@ -19,14 +19,12 @@ BULLET_COLOR = (0, 255, 0)
 BLOCK_COLOR = (255, 0, 0)
 
 
-def run():
+def run(ttl_timer: TtlTimer):
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Breakout")
     clock = pygame.time.Clock()
     font = pygame.font.SysFont(None, 36)
-
-    timer = start_ttl_timer()
 
     player_rect = pygame.Rect(
         WIDTH // 2 - PLAYER_WIDTH // 2,
@@ -43,6 +41,7 @@ def run():
 
     running = True
     game_over = False
+    start_time = pygame.time.get_ticks()
 
     while running:
         for event in pygame.event.get():
@@ -93,15 +92,22 @@ def run():
             for block in blocks:
                 pygame.draw.rect(screen, BLOCK_COLOR, block)
 
+            ttl_surf = font.render(f"TTL: {ttl_timer.elapsed():.2f}s", True, (200, 200, 200))
+            screen.blit(ttl_surf, (10, 10))
+
             pygame.display.flip()
             clock.tick(60)
         else:
-            player_time = timer()
-            screen.fill(BACKGROUND_COLOR)
-            text = font.render(f"Time: {player_time:.2f}s", True, (255, 255, 255))
-            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
-            pygame.display.flip()
-            pygame.time.wait(2000)
             running = False
 
+    player_time = (pygame.time.get_ticks() - start_time) / 1000.0
+    ttl_timer.pause()
+    screen.fill(BACKGROUND_COLOR)
+    text = font.render(f"Time: {player_time:.2f}s", True, (255, 255, 255))
+    screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
+    pygame.display.flip()
+    pygame.time.wait(2000)
+    ttl_timer.resume()
+
     pygame.quit()
+    return player_time

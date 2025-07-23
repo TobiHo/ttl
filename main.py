@@ -2,6 +2,7 @@ import json
 import os
 import time
 import pygame
+from ttl_timer import TtlTimer
 
 from games import breakout, pixel_jump, tap_race, pong
 
@@ -69,24 +70,80 @@ def show_start_screen(entries):
     return start
 
 
-def run_all_games():
-    start = time.time()
+def show_end_screen(total_time):
+    pygame.init()
+    screen = pygame.display.set_mode((640, 480))
+    pygame.display.set_caption('Ergebnis')
+    font = pygame.font.SysFont(None, 36)
+
+    input_box = pygame.Rect(220, 220, 200, 40)
+    save_button = pygame.Rect(270, 280, 100, 40)
+    name = ''
+    active = False
+    running = True
+    result = None
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if input_box.collidepoint(event.pos):
+                    active = True
+                else:
+                    active = False
+                if save_button.collidepoint(event.pos):
+                    result = name.strip()
+                    running = False
+            elif event.type == pygame.KEYDOWN and active:
+                if event.key == pygame.K_RETURN:
+                    result = name.strip()
+                    running = False
+                elif event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]
+                else:
+                    if event.unicode.isprintable() and len(name) < 20:
+                        name += event.unicode
+
+        screen.fill((30, 30, 30))
+        time_surf = font.render(f'Gesamtzeit: {total_time:.2f}s', True, (255, 255, 255))
+        screen.blit(time_surf, (320 - time_surf.get_width() // 2, 150))
+
+        pygame.draw.rect(screen, (255, 255, 255), input_box, 2)
+        name_surf = font.render(name, True, (255, 255, 255))
+        screen.blit(name_surf, (input_box.x + 5, input_box.y + 5))
+
+        pygame.draw.rect(screen, (50, 200, 50), save_button)
+        btn_text = font.render('OK', True, (0, 0, 0))
+        screen.blit(btn_text, (save_button.centerx - btn_text.get_width() // 2,
+                               save_button.centery - btn_text.get_height() // 2))
+
+        pygame.display.flip()
+        pygame.time.wait(30)
+
+    pygame.quit()
+    return result
+
+
+def run_all_games(ttl: TtlTimer):
+    total = 0.0
     for game in (pong.run, breakout.run, pixel_jump.run, tap_race.run):
-        game()
-    return time.time() - start
+        total += game(ttl)
+    return total
 
 
 def main():
     leaderboard = load_leaderboard()
-    if not show_start_screen(leaderboard):
-        return
+    while True:
+        if not show_start_screen(leaderboard):
+            break
 
-    total_time = run_all_games()
-    print(f'Gesamtzeit: {total_time:.2f}s')
-    name = input('Name fuer Bestenliste: ').strip()
-    if name:
-        leaderboard.append({'name': name, 'time': total_time})
-        save_leaderboard(leaderboard)
+        ttl = TtlTimer()
+        total_time = run_all_games(ttl)
+
+        name = show_end_screen(total_time)
+        if name:
+            leaderboard.append({'name': name, 'time': total_time})
+            save_leaderboard(leaderboard)
 
 
 if __name__ == '__main__':
