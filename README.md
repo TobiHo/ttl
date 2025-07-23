@@ -1,1 +1,1 @@
-# TTL – Time To Life
+# TTL – Time To Live
